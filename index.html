@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Blog de tecnologia: Linux, programação e hardware, explicados com calma.">
+<meta name="author" content="Pinguim de Bolso">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:title" content="Pinguim de Bolso — blog de tecnologia">
+<meta property="og:description" content="Linux, programação e hardware, explicados com calma.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+<title>Pinguim de Bolso — blog de tecnologia</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%232f7d4f'/%3E%3Ctext%20x='32'%20y='45'%20font-family='system-ui,sans-serif'%20font-size='32'%20font-weight='800'%20text-anchor='middle'%20fill='%23fff'%3EPB%3C/text%3E%3C/svg%3E">
+<style>
+*,
+*::before,
+*::after{box-sizing:border-box}
+
+:root{
+  --bg:#ffffff;
+  --surface:#f7faf8;
+  --ink:#111827;
+  --muted:#4b5563;
+  --accent:#2f7d4f;
+  --line:#e5e7eb;
+  --pastel:#b8e6c4;
+  --onpastel:#12361f;
+  --erro:#b91c1c;
+  --radius:8px;
+  color-scheme:light dark;
+}
+
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1115;--surface:#161a20;--ink:#f3f4f6;--muted:#a3adb8;
+    --accent:#8fd6a4;--line:#2a303a;--pastel:#a8e0b8;--erro:#fca5a5;
+  }
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0f1115;--surface:#161a20;--ink:#f3f4f6;--muted:#a3adb8;
+  --accent:#8fd6a4;--line:#2a303a;--pastel:#a8e0b8;--erro:#fca5a5;
+}
+
+:root[data-theme="light"]{color-scheme:light}
+
+html{
+  scroll-behavior:smooth;
+  scroll-padding-top:1rem;
+  -webkit-text-size-adjust:100%;
+}
+
+body{
+  margin:0;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  background:var(--bg);
+  color:var(--ink);
+  font:1.125rem/1.9 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  letter-spacing:.01em;
+  -webkit-font-smoothing:antialiased;
+}
+
+::selection{background:var(--pastel);color:var(--onpastel)}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+.wrap{max-width:46rem;margin-inline:auto;padding-inline:1.25rem}
+
+.sr-only{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+.pular{
+  position:absolute;left:-9999px;top:0;z-index:100;
+  background:var(--pastel);color:var(--onpastel);
+  font-weight:800;padding:.75rem 1.25rem;
+  border-radius:0 0 var(--radius) 0;text-decoration:none;
+}
+.pular:focus{left:0}
+
+header{border-bottom:3px solid var(--ink);padding:1.25rem 0}
+header .wrap{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+
+.logo{
+  font-weight:800;font-size:1.6rem;line-height:1;letter-spacing:-.02em;
+  color:var(--ink);text-decoration:none;
+}
+.logo span{background:var(--pastel);color:var(--onpastel);padding:0 .25rem;border-radius:4px}
+
+nav{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem 1.25rem}
+nav a{
+  color:var(--ink);font-weight:700;font-size:.85rem;
+  text-transform:uppercase;letter-spacing:.06em;text-decoration:none;
+}
+nav a:hover{color:var(--accent);text-decoration:underline}
+
+.hero{padding:4rem 0 3rem}
+.hero h1{
+  font-weight:800;font-size:clamp(2.2rem,7vw,3.4rem);line-height:1.15;
+  letter-spacing:-.02em;margin:0 0 1.5rem;
+}
+.hero p{color:var(--muted);max-width:34rem;margin:0}
+
+.prompt{
+  font:1rem/1.6 ui-monospace,"DejaVu Sans Mono",monospace;
+  color:var(--accent);margin-bottom:1.5rem;
+}
+.cursor{
+  display:inline-block;width:.6em;height:1.1em;background:var(--pastel);
+  outline:1px solid var(--accent);vertical-align:text-bottom;
+  animation:blink 1.1s steps(2) infinite;
+}
+@keyframes blink{50%{opacity:0}}
+
+h2{
+  font-size:1.05rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+  color:var(--muted);border-bottom:2px solid var(--ink);
+  padding-bottom:.5rem;margin:0 0 1.5rem;
+}
+
+article{border-bottom:1px solid var(--line);padding:1.75rem 0}
+article:last-of-type{border-bottom:0}
+article h3{
+  font-size:1.45rem;font-weight:800;line-height:1.3;
+  margin:0 0 .75rem;letter-spacing:-.01em;
+}
+article h3 a{color:inherit;text-decoration:none}
+article h3 a:hover,
+article h3 a:focus-visible{color:var(--accent);text-decoration:underline}
+article p{margin:0 0 1rem;color:var(--muted)}
+article p:last-of-type{margin-bottom:0}
+
+.linha{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem .75rem;margin-bottom:.7rem}
+.meta{font-size:.95rem;color:var(--muted)}
+.tag{
+  display:inline-block;background:var(--pastel);color:var(--onpastel);
+  border-radius:999px;padding:.1rem .7rem;font-size:.8rem;font-weight:800;
+  line-height:1.7;text-transform:uppercase;letter-spacing:.08em;
+}
+
+.ler-mais{
+  display:inline-block;margin-top:.35rem;font-weight:700;font-size:.95rem;
+  color:var(--accent);text-decoration:none;
+  border-bottom:2px solid transparent;
+}
+.ler-mais:hover,
+.ler-mais:focus-visible{border-bottom-color:var(--accent)}
+
+/* ---- Leitura de um post ---- */
+#posts.modo-post #admin,
+#posts.modo-post #busca,
+#posts.modo-post > h2{display:none}
+
+.post-completo{border-bottom:0;padding-top:0}
+.titulo-post{
+  font-size:clamp(1.7rem,5vw,2.4rem);font-weight:800;line-height:1.2;
+  letter-spacing:-.02em;margin:.25rem 0 1.25rem;
+  text-transform:none;color:var(--ink);border-bottom:0;padding-bottom:0;
+}
+.titulo-post:focus{outline:none}
+.titulo-post:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
+
+.acoes-post{
+  display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+  margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--line);
+}
+.acoes-post .del{margin:0}
+.voltar{color:var(--accent);font-weight:700;text-decoration:none}
+.voltar:hover,.voltar:focus-visible{text-decoration:underline}
+
+/* ---- Ações na lista (editar/apagar) ---- */
+.acoes-lista{
+  display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+  margin-top:.75rem;
+}
+.acoes-lista .del{margin:0}
+
+.vazio{color:var(--muted);font-style:italic;padding:1.5rem 0;margin:0}
+
+.sobre{padding:2rem 0 3rem}
+footer{border-top:1px solid var(--line);padding:2rem 0;color:var(--muted);font-size:.95rem}
+
+button{
+  font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:6px;
+  padding:.5rem 1.25rem;background:var(--pastel);color:var(--onpastel);
+}
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.6;cursor:default;filter:none}
+
+#tema{margin:0;padding:.3rem 1rem;font-size:.9rem}
+
+#admin:empty{display:none}
+#admin{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);padding:1.5rem;margin-bottom:2rem;
+}
+
+.painel-topo{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:.75rem;flex-wrap:wrap;margin-bottom:1rem;
+}
+.painel-topo h3{margin:0;font-size:1.1rem;font-weight:800}
+
+.pendente{
+  font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--onpastel);background:var(--pastel);border-radius:999px;padding:.15rem .7rem;
+}
+.pendente[hidden]{display:none}
+
+.campo{margin-bottom:1rem}
+.campo label{
+  display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;
+  margin-bottom:.3rem;font-size:.95rem;font-weight:700;
+}
+.campo input,
+.campo textarea,
+#busca input{
+  width:100%;font:inherit;line-height:1.6;padding:.6rem .8rem;
+  border:1px solid var(--line);border-radius:6px;
+  background:var(--bg);color:var(--ink);
+}
+.campo textarea{resize:vertical;min-height:8rem}
+.contador{font-size:.8rem;font-weight:400;color:var(--muted)}
+
+.botoes-form{
+  display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;
+  margin-top:.5rem;
+}
+.cancelar{
+  background:transparent;color:var(--muted);border:1px solid var(--line);
+  font-weight:700;
+}
+.cancelar[hidden]{display:none}
+.cancelar:hover{filter:none;background:var(--line)}
+
+.status{margin:.75rem 0 0;font-size:.95rem;min-height:1.4em}
+.status[data-tipo="erro"]{color:var(--erro)}
+.status[data-tipo="ok"]{color:var(--accent)}
+
+#busca{margin-bottom:1rem}
+#busca label{display:block;margin-bottom:.3rem;color:var(--muted);font-size:.95rem}
+
+.cmd{
+  display:flex;align-items:center;gap:.75rem 1rem;flex-wrap:wrap;
+  padding:.9rem 0;border-bottom:1px solid var(--line);
+}
+.cmd code{
+  font:1rem/1.6 ui-monospace,"DejaVu Sans Mono",monospace;
+  padding:.2rem .7rem;border-radius:6px;background:var(--pastel);color:var(--onpastel);
+}
+.cmd span{flex:1 1 12rem;color:var(--muted)}
+.cp{margin:0;padding:.3rem 1rem}
+
+.del{
+  background:transparent;color:var(--muted);border:1px solid var(--line);
+  font-weight:400;font-size:.95rem;margin:.75rem 0 0;padding:.1rem .8rem;
+}
+.del.armado{background:var(--erro);border-color:var(--erro);color:var(--bg);font-weight:700}
+
+.editar{
+  background:transparent;color:var(--accent);border:1px solid var(--accent);
+  font-weight:700;font-size:.95rem;margin:0;padding:.1rem .8rem;
+}
+.editar:hover{background:var(--pastel);color:var(--onpastel);filter:none}
+
+.ul2{list-style:none;padding:0;margin:0}
+.ul2 li{padding:.8rem 0;border-bottom:1px solid var(--line)}
+.ul2 a{color:var(--accent);font-weight:700}
+.ul2 span{display:block;color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .cursor{animation:none}
+}
+</style>
+<script>
+/* Aplica o tema salvo antes da primeira pintura, evitando "flash" de cor errada. */
+try{
+  var temaSalvo = localStorage.getItem('tema');
+  if (temaSalvo === 'dark' || temaSalvo === 'light') {
+    document.documentElement.dataset.theme = temaSalvo;
+  }
+}catch(e){}
+</script>
+</head>
+<body>
+<a class="pular" href="#posts">Pular para os posts</a>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="#topo">Pinguim <span>de Bolso</span></a>
+    <nav aria-label="Menu principal">
+      <a href="#posts">Posts</a>
+      <a href="#terminal">Terminal</a>
+      <a href="#sobre">Sobre</a>
+      <button id="tema" type="button">Tema</button>
+    </nav>
+  </div>
+</header>
+
+<main id="topo" class="wrap">
+  <section class="hero">
+    <div class="prompt">~$ aprender --sem-pressa<span class="cursor" aria-hidden="true"></span></div>
+    <h1>Tecnologia explicada com calma.</h1>
+    <p>Um blog sobre Linux, programação e hardware.<br>Textos curtos, claros e sem enrolação.</p>
+  </section>
+
+  <section id="posts">
+    <h2>Últimos posts</h2>
+    <div id="admin"></div>
+    <div id="busca">
+      <label for="q">Buscar posts</label>
+      <input id="q" type="search" placeholder="Digite uma palavra" autocomplete="off">
+    </div>
+    <div id="lista"></div>
+  </section>
+
+  <section id="terminal" class="sobre">
+    <h2>Cantinho do terminal</h2>
+    <div class="cmd"><code>ls -lah</code><span>Lista os arquivos, com o tamanho de cada um.</span><button class="cp" type="button">Copiar</button></div>
+    <div class="cmd"><code>df -h</code><span>Mostra quanto espaço livre ainda tem no disco.</span><button class="cp" type="button">Copiar</button></div>
+    <div class="cmd"><code>free -h</code><span>Mostra quanta memória RAM está em uso.</span><button class="cp" type="button">Copiar</button></div>
+    <div class="cmd"><code>python3 -m http.server</code><span>Abre um mini servidor web na pasta atual.</span><button class="cp" type="button">Copiar</button></div>
+  </section>
+
+  <section id="aprendendo" class="sobre">
+    <h2>Estou aprendendo</h2>
+    <ul class="ul2">
+      <li><strong>Python</strong><span>Lógica, funções e os primeiros programas.</span></li>
+      <li><strong>Linux</strong><span>O terminal e como escolher uma distro leve.</span></li>
+    </ul>
+  </section>
+
+  <section id="links" class="sobre">
+    <h2>Links úteis</h2>
+    <ul class="ul2">
+      <li><a href="https://linuxmint.com" target="_blank" rel="noopener noreferrer">Linux Mint</a><span>Distro fácil de usar, boa para quem está começando.</span></li>
+      <li><a href="https://www.python.org" target="_blank" rel="noopener noreferrer">Python</a><span>Site oficial, com a documentação da linguagem.</span></li>
+      <li><a href="https://f-droid.org" target="_blank" rel="noopener noreferrer">F-Droid</a><span>Loja de apps livres para Android.</span></li>
+      <li><a href="https://www.fossify.org" target="_blank" rel="noopener noreferrer">Fossify</a><span>Apps simples e livres para o celular.</span></li>
+      <li><a href="https://www.libreoffice.org" target="_blank" rel="noopener noreferrer">LibreOffice</a><span>Pacote de escritório livre e gratuito.</span></li>
+    </ul>
+  </section>
+
+  <section id="sobre" class="sobre">
+    <h2>Sobre o blog</h2>
+    <p>O Pinguim de Bolso nasceu da vontade de explicar tecnologia de um jeito simples.<br>Aqui você encontra guias práticos, sem termos desnecessários.</p>
+  </section>
+</main>
+
+<footer><div class="wrap">© 2026 Pinguim de Bolso. Feito com software livre em mente.</div></footer>
+
+<script id="data" type="application/json">[{"tag": "Linux", "titulo": "Por que um PC antigo ainda pode ser útil", "data": "08/11/2026", "texto": "Com uma distro leve, máquinas de mais de dez anos voltam a funcionar bem. Veja como escolher e o que esperar.\nMuitas vezes, o que pesa em um PC velho é o sistema, com muita coisa rodando ao fundo, e não o hardware em si. Distros pensadas para máquinas modestas, como o Linux Mint na versão Xfce, o Lubuntu ou o antiX, usam menos memória logo ao ligar.\nAntes de instalar, teste: grave a distro em um pendrive e inicie o computador por ele. Dá para usar tudo sem mexer no disco. Se o Wi-Fi, o som e o vídeo funcionarem, a instalação costuma ser tranquila.\nDuas dicas valem ouro: faça backup dos seus arquivos antes e, se puder, troque o HD por um SSD. Em um computador antigo, essa costuma ser a melhora mais perceptível."}, {"tag": "Python", "titulo": "Primeiros passos em Python no terminal", "data": "08/11/2026", "texto": "Instalar, abrir o interpretador e escrever o primeiro programa. Tudo em poucos minutos.\nNo Linux, o Python 3 geralmente já vem instalado. Abra o terminal e digite python3 --version para conferir.\nDepois, digite python3 e aperte Enter. O prompt muda para >>>, e você já pode escrever código. Experimente: print(\"Olá, mundo!\"). Para sair, use exit().\nPara guardar o programa, crie um arquivo chamado ola.py com a mesma linha dentro e rode no terminal com python3 ola.py. É o começo de qualquer programa em Python."}, {"tag": "Privacidade", "titulo": "Como deixar o celular mais limpo e leve", "data": "08/11/2026", "texto": "Remover apps que você não usa e trocar por alternativas livres. Menos peso, mais controle.\nComece pelo simples: abra a lista de apps e desinstale o que você não usa há meses. Cada app parado ocupa espaço e, muitas vezes, continua pedindo permissões e rodando em segundo plano.\nMuitos apps que vêm de fábrica não podem ser removidos, mas dá para desativá-los nas configurações. Depois, revise as permissões: um app de lanterna não precisa do seu microfone nem da sua localização.\nPara trocar por alternativas livres, a loja F-Droid reúne apps de código aberto. Os apps do projeto Fossify, por exemplo, cobrem galeria, contatos e outros básicos, sem anúncios."}]</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+     Limites e utilidades
+     ========================================================= */
+  var LIMITES = { tag: 40, titulo: 120, texto: 8000 };
+  var MAX_POSTS = 200;
+  var TITULO_BASE = document.title;
+
+  function limpar(valor, max) {
+    return String(valor == null ? '' : valor)
+      .replace(/\r\n?/g, '\n')
+      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+      .trim()
+      .slice(0, max);
+  }
+
+  function slugificar(texto) {
+    var s = String(texto || '').toLowerCase();
+    try { s = s.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+    s = s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+    return s || 'post';
+  }
+
+  function normalizar(lista) {
+    if (!Array.isArray(lista)) return [];
+    var saida = [];
+    for (var i = 0; i < lista.length && saida.length < MAX_POSTS; i++) {
+      var item = lista[i];
+      if (!item || typeof item !== 'object') continue;
+      var tag = limpar(item.tag, LIMITES.tag) || 'Geral';
+      var titulo = limpar(item.titulo, LIMITES.titulo);
+      var texto = limpar(item.texto, LIMITES.texto);
+      var data = limpar(item.data, 20);
+      var id = limpar(item.id, 80);
+      if (titulo && texto) {
+        saida.push({ id: id, tag: tag, titulo: titulo, texto: texto, data: data });
+      }
+    }
+    return saida;
+  }
+
+  function el(tag, classe, texto) {
+    var n = document.createElement(tag);
+    if (classe) n.className = classe;
+    if (texto !== undefined) n.textContent = texto;
+    return n;
+  }
+
+  function minutosDeLeitura(texto) {
+    var palavras = texto.split(/\s+/).filter(Boolean).length;
+    return Math.max(1, Math.ceil(palavras / 200));
+  }
+
+  /* =========================================================
+     Estado
+     ========================================================= */
+  var POSTS = [];
+  var filtro = '';
+  var artefato = null;
+  var slugExibido = '';
+  var focarTitulo = false;
+  var editandoId = null;
+  var formRefs = {};
+
+  var lista = document.getElementById('lista');
+  var adminBox = document.getElementById('admin');
+  var secaoPosts = document.getElementById('posts');
+  var busca = document.getElementById('q');
+
+  (function carregar() {
+    var node = document.getElementById('data');
+    if (node) {
+      try {
+        POSTS = normalizar(JSON.parse(node.textContent || '[]'));
+      } catch (e) {
+        POSTS = [];
+      }
+    }
+    atribuirIds();
+  })();
+
+  function atribuirIds() {
+    var usados = Object.create(null);
+    POSTS.forEach(function (p) {
+      var base = p.id ? slugificar(p.id) : slugificar(p.titulo);
+      var id = base, n = 2;
+      while (usados[id]) { id = base + '-' + n; n++; }
+      usados[id] = 1;
+      p.id = id;
+    });
+  }
+
+  function acharPost(slug) {
+    if (!slug) return null;
+    for (var i = 0; i < POSTS.length; i++) {
+      if (POSTS[i].id === slug) return POSTS[i];
+    }
+    return null;
+  }
+
+  function idUnico(base) {
+    var id = base, n = 2;
+    while (acharPost(id)) { id = base + '-' + n; n++; }
+    return id;
+  }
+
+  /* =========================================================
+     Roteador: #post/<slug> abre a leitura
+     ========================================================= */
+  function slugDoHash() {
+    var m = /^#post\/(.+)$/.exec(location.hash || '');
+    if (!m) return '';
+    try { return decodeURIComponent(m[1]); } catch (e) { return m[1]; }
+  }
+
+  function hrefDoPost(post) {
+    return '#post/' + encodeURIComponent(post.id);
+  }
+
+  function render() {
+    var slug = slugDoHash();
+    var post = acharPost(slug);
+    if (slug && !post) slug = '';
+
+    slugExibido = slug;
+    if (post) renderPost(post);
+    else renderLista();
+  }
+
+  /* =========================================================
+     Lista de posts
+     ========================================================= */
+  function renderLista() {
+    secaoPosts.classList.remove('modo-post');
+    document.title = TITULO_BASE;
+
+    var frag = document.createDocumentFragment();
+    var encontrados = POSTS.filter(function (p) {
+      if (!filtro) return true;
+      return (p.tag + ' ' + p.titulo + ' ' + p.texto).toLowerCase().indexOf(filtro) !== -1;
+    });
+
+    if (!encontrados.length) {
+      frag.append(el('p', 'vazio', POSTS.length
+        ? 'Nenhum post combina com a busca.'
+        : 'Ainda não há posts publicados.'));
+    } else {
+      encontrados.forEach(function (p) { frag.append(criarArtigo(p)); });
+    }
+    lista.replaceChildren(frag);
+  }
+
+  function criarArtigo(post) {
+    var artigo = el('article');
+
+    var linha = el('div', 'linha');
+    linha.append(el('span', 'tag', post.tag));
+    var partes = [];
+    if (post.data) partes.push(post.data);
+    partes.push(minutosDeLeitura(post.texto) + ' min de leitura');
+    linha.append(el('span', 'meta', partes.join(' · ')));
+
+    var h3 = el('h3');
+    var link = el('a', '', post.titulo);
+    link.href = hrefDoPost(post);
+    h3.append(link);
+
+    artigo.append(linha, h3);
+    paragrafos(post.texto).slice(0, 1).forEach(function (t) { artigo.append(el('p', '', t)); });
+
+    var mais = el('a', 'ler-mais', 'Ler post →');
+    mais.href = hrefDoPost(post);
+    artigo.append(mais);
+
+    if (artefato) {
+      var acoes = el('div', 'acoes-lista');
+      acoes.append(criarBotaoEditar(post), criarBotaoApagar(post));
+      artigo.append(acoes);
+    }
+    return artigo;
+  }
+
+  function paragrafos(texto) {
+    return texto.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+  }
+
+  /* =========================================================
+     Leitura de um post
+     ========================================================= */
+  function renderPost(post) {
+    secaoPosts.classList.add('modo-post');
+    document.title = post.titulo + ' — Pinguim de Bolso';
+
+    var artigo = el('article', 'post-completo');
+
+    var linha = el('div', 'linha');
+    linha.append(el('span', 'tag', post.tag));
+    var partes = [];
+    if (post.data) partes.push(post.data);
+    partes.push(minutosDeLeitura(post.texto) + ' min de leitura');
+    linha.append(el('span', 'meta', partes.join(' · ')));
+
+    var titulo = el('h2', 'titulo-post', post.titulo);
+    titulo.tabIndex = -1;
+
+    artigo.append(linha, titulo);
+    paragrafos(post.texto).forEach(function (t) { artigo.append(el('p', '', t)); });
+
+    var acoes = el('div', 'acoes-post');
+    var voltar = el('a', 'voltar', '← Voltar para os posts');
+    voltar.href = '#posts';
+    acoes.append(voltar);
+    if (artefato) {
+      acoes.append(criarBotaoEditar(post));
+      acoes.append(criarBotaoApagar(post, true));
+    }
+    artigo.append(acoes);
+
+    lista.replaceChildren(artigo);
+
+    if (focarTitulo) {
+      focarTitulo = false;
+      try { titulo.focus({ preventScroll: true }); } catch (e) { titulo.focus(); }
+    }
+  }
+
+  /* =========================================================
+     Botões: editar e apagar
+     ========================================================= */
+  function criarBotaoEditar(post) {
+    var b = el('button', 'editar', 'Editar');
+    b.type = 'button';
+    b.addEventListener('click', function () { editarPost(post); });
+    return b;
+  }
+
+  function criarBotaoApagar(post, daLeitura) {
+    var b = el('button', 'del', 'Apagar');
+    b.type = 'button';
+    var armado = false;
+    var timer = 0;
+
+    function desarmar() {
+      armado = false;
+      clearTimeout(timer);
+      b.textContent = 'Apagar';
+      b.classList.remove('armado');
+    }
+
+    b.addEventListener('click', async function () {
+      if (!armado) {
+        armado = true;
+        b.textContent = 'Confirmar?';
+        b.classList.add('armado');
+        timer = setTimeout(desarmar, 5000);
+        return;
+      }
+      clearTimeout(timer);
+      b.disabled = true;
+      b.textContent = 'Apagando…';
+
+      var antes = POSTS.slice();
+      var indice = POSTS.indexOf(post);
+      if (indice === -1) { b.disabled = false; desarmar(); return; }
+      POSTS.splice(indice, 1);
+
+      var ok = await publicar();
+
+      if (ok) {
+        if (editandoId === post.id) cancelarEdicao();
+        if (daLeitura && slugExibido) {
+          try { history.replaceState(null, '', '#posts'); } catch (e) {}
+        }
+        render();
+      } else {
+        POSTS = antes;
+        b.disabled = false;
+        desarmar();
+      }
+    });
+
+    return b;
+  }
+
+  /* =========================================================
+     Edição
+     ========================================================= */
+  function editarPost(post) {
+    if (!formRefs.titulo) return; /* modo de edição não disponível */
+
+    if (slugExibido) {
+      slugExibido = '';
+      try { history.replaceState(null, '', '#posts'); }
+      catch (e) { try { location.hash = '#posts'; } catch (e2) {} }
+      renderLista();
+    }
+
+    preencherFormularioEdicao(post);
+
+    if (adminBox) {
+      try { adminBox.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      catch (e) { adminBox.scrollIntoView(); }
+    }
+    setTimeout(function () {
+      try { formRefs.titulo.focus({ preventScroll: true }); }
+      catch (e) { formRefs.titulo.focus(); }
+    }, 120);
+  }
+
+  function preencherFormularioEdicao(post) {
+    editandoId = post.id;
+    formRefs.tag.value = post.tag;
+    formRefs.titulo.value = post.titulo;
+    formRefs.texto.value = post.texto;
+    formRefs.contador.textContent = post.texto.length + '/' + LIMITES.texto;
+    atualizarModoForm();
+  }
+
+  function cancelarEdicao() {
+    editandoId = null;
+    if (formRefs.tag) formRefs.tag.value = '';
+    if (formRefs.titulo) formRefs.titulo.value = '';
+    if (formRefs.texto) formRefs.texto.value = '';
+    if (formRefs.contador) formRefs.contador.textContent = '0/' + LIMITES.texto;
+    atualizarModoForm();
+  }
+
+  function atualizarModoForm() {
+    if (!formRefs.painelTitulo) return;
+    if (editandoId) {
+      formRefs.painelTitulo.textContent = 'Editando post';
+      formRefs.submit.textContent = 'Salvar alterações';
+      formRefs.cancel.hidden = false;
+    } else {
+      formRefs.painelTitulo.textContent = 'Novo post';
+      formRefs.submit.textContent = 'Publicar post';
+      formRefs.cancel.hidden = true;
+    }
+  }
+
+  /* =========================================================
+     Publicação (modo de edição)
+     ========================================================= */
+  function status(msg, tipo) {
+    var s = document.getElementById('status');
+    if (!s) return;
+    s.textContent = msg || '';
+    if (tipo) s.dataset.tipo = tipo;
+    else delete s.dataset.tipo;
+  }
+
+  function marcarPendente(valor) {
+    var badge = document.getElementById('pendente');
+    if (badge) badge.hidden = !valor;
+  }
+
+  function gerarHTML() {
+    var raiz = document.documentElement.cloneNode(true);
+    raiz.removeAttribute('data-theme');
+    raiz.removeAttribute('style');
+
+    var limparNo = function (sel) {
+      var n = raiz.querySelector(sel);
+      if (n) n.replaceChildren();
+    };
+    limparNo('#lista');
+    limparNo('#admin');
+
+    var sec = raiz.querySelector('#posts');
+    if (sec) sec.classList.remove('modo-post');
+
+    var tit = raiz.querySelector('title');
+    if (tit) tit.textContent = TITULO_BASE;
+
+    var temaBtn = raiz.querySelector('#tema');
+    if (temaBtn) {
+      temaBtn.textContent = 'Tema';
+      temaBtn.removeAttribute('aria-label');
+      temaBtn.removeAttribute('aria-pressed');
+    }
+
+    var campoBusca = raiz.querySelector('#q');
+    if (campoBusca) campoBusca.removeAttribute('value');
+
+    var dados = raiz.querySelector('#data');
+    if (dados) {
+      dados.textContent = JSON.stringify(POSTS)
+        .replace(/</g, '\\u003c')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029');
+    }
+
+    return '<!DOCTYPE html>\n' + raiz.outerHTML;
+  }
+
+  async function publicar() {
+    if (!artefato || typeof artefato.publish !== 'function') return false;
+    status('Publicando…', 'info');
+    try {
+      await artefato.publish(gerarHTML());
+      status('Publicado! A página foi atualizada.', 'ok');
+      marcarPendente(false);
+      return true;
+    } catch (e) {
+      var msg = (e && (e.message || e.code)) || 'erro desconhecido';
+      status('Não deu para publicar: ' + msg, 'erro');
+      return false;
+    }
+  }
+
+  /* =========================================================
+     Painel de edição
+     ========================================================= */
+  function campo(id, rotulo, tipo, extra) {
+    var wrap = el('div', 'campo');
+    var label = el('label', '', rotulo);
+    label.htmlFor = id;
+
+    var input = document.createElement(tipo === 'textarea' ? 'textarea' : 'input');
+    input.id = id;
+    input.name = id;
+    if (tipo !== 'textarea') input.type = 'text';
+
+    if (extra) {
+      for (var k in extra) {
+        if (Object.prototype.hasOwnProperty.call(extra, k)) input[k] = extra[k];
+      }
+    }
+
+    wrap.append(label, input);
+    return { wrap: wrap, input: input, label: label };
+  }
+
+  function montarPainel() {
+    if (!adminBox) return;
+
+    var topo = el('div', 'painel-topo');
+    var titulo = el('h3', '', 'Novo post');
+    titulo.id = 'painel-titulo';
+    var badge = el('span', 'pendente', 'Alterações não publicadas');
+    badge.id = 'pendente';
+    badge.hidden = true;
+    topo.append(titulo, badge);
+
+    var form = document.createElement('form');
+    form.className = 'form-post';
+    form.setAttribute('aria-labelledby', 'painel-titulo');
+
+    var fTag = campo('f-tag', 'Categoria', 'input', {
+      maxLength: LIMITES.tag, placeholder: 'Ex.: Linux', autocomplete: 'off'
+    });
+    var fTitulo = campo('f-titulo', 'Título', 'input', {
+      maxLength: LIMITES.titulo, required: true, autocomplete: 'off'
+    });
+    var fTexto = campo('f-texto', 'Texto (uma linha em branco separa os parágrafos)', 'textarea', {
+      maxLength: LIMITES.texto, required: true, rows: 8
+    });
+
+    var contador = el('span', 'contador', '0/' + LIMITES.texto);
+    fTexto.label.append(contador);
+    fTexto.input.addEventListener('input', function () {
+      contador.textContent = fTexto.input.value.length + '/' + LIMITES.texto;
+    });
+
+    var botao = el('button', '', 'Publicar post');
+    botao.type = 'submit';
+
+    var cancelBtn = el('button', 'cancelar', 'Cancelar edição');
+    cancelBtn.type = 'button';
+    cancelBtn.hidden = true;
+    cancelBtn.addEventListener('click', cancelarEdicao);
+
+    var msg = el('p', 'status');
+    msg.id = 'status';
+    msg.setAttribute('role', 'status');
+    msg.setAttribute('aria-live', 'polite');
+
+    var botoes = el('div', 'botoes-form');
+    botoes.append(botao, cancelBtn);
+
+    form.append(fTag.wrap, fTitulo.wrap, fTexto.wrap, botoes, msg);
+    adminBox.append(topo, form);
+
+    formRefs.painelTitulo = titulo;
+    formRefs.tag = fTag.input;
+    formRefs.titulo = fTitulo.input;
+    formRefs.texto = fTexto.input;
+    formRefs.contador = contador;
+    formRefs.submit = botao;
+    formRefs.cancel = cancelBtn;
+
+    form.addEventListener('submit', async function (ev) {
+      ev.preventDefault();
+
+      var tag = limpar(fTag.input.value, LIMITES.tag) || 'Geral';
+      var tituloTexto = limpar(fTitulo.input.value, LIMITES.titulo);
+      var corpo = limpar(fTexto.input.value, LIMITES.texto);
+
+      if (!tituloTexto || !corpo) {
+        status('Preencha o título e o texto.', 'erro');
+        (tituloTexto ? fTexto.input : fTitulo.input).focus();
+        return;
+      }
+
+      if (editandoId) {
+        /* ---------- Editar post existente ---------- */
+        var post = acharPost(editandoId);
+        if (!post) {
+          status('Este post não existe mais. Ele pode ter sido apagado.', 'erro');
+          cancelarEdicao();
+          render();
+          return;
+        }
+
+        var antes = { tag: post.tag, titulo: post.titulo, texto: post.texto };
+        post.tag = tag;
+        post.titulo = tituloTexto;
+        post.texto = corpo;
+
+        botao.disabled = true;
+        botao.textContent = 'Salvando…';
+
+        var okEdicao = await publicar();
+
+        botao.disabled = false;
+
+        if (okEdicao) {
+          cancelarEdicao();
+          render();
+        } else {
+          post.tag = antes.tag;
+          post.titulo = antes.titulo;
+          post.texto = antes.texto;
+          atualizarModoForm();
+        }
+        return;
+      }
+
+      /* ---------- Criar post novo ---------- */
+      if (POSTS.length >= MAX_POSTS) {
+        status('Limite de ' + MAX_POSTS + ' posts atingido. Apague algum antes.', 'erro');
+        return;
+      }
+
+      var novo = {
+        id: idUnico(slugificar(tituloTexto)),
+        tag: tag,
+        titulo: tituloTexto,
+        texto: corpo,
+        data: new Date().toLocaleDateString('pt-BR')
+      };
+
+      var antesLista = POSTS.slice();
+      POSTS.unshift(novo);
+
+      botao.disabled = true;
+      botao.textContent = 'Publicando…';
+
+      var okNovo = await publicar();
+
+      botao.disabled = false;
+
+      if (okNovo) {
+        cancelarEdicao();
+        render();
+      } else {
+        POSTS = antesLista;
+        atualizarModoForm();
+      }
+    });
+  }
+
+  /* =========================================================
+     Busca
+     ========================================================= */
+  if (busca) {
+    busca.addEventListener('input', function () {
+      filtro = busca.value.trim().toLowerCase();
+      if (!slugExibido) renderLista();
+    });
+    busca.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && busca.value) {
+        busca.value = '';
+        filtro = '';
+        renderLista();
+      }
+    });
+  }
+
+  /* =========================================================
+     Navegação por hash
+     ========================================================= */
+  window.addEventListener('hashchange', function () {
+    var slug = slugDoHash();
+    if (slug === slugExibido) return;
+    focarTitulo = !!slug;
+    render();
+  });
+
+  /* =========================================================
+     Copiar comando
+     ========================================================= */
+  document.querySelectorAll('.cp').forEach(function (btn) {
+    btn.addEventListener('click', async function () {
+      if (btn.dataset.ocupado === '1') return;
+
+      var cmd = btn.closest('.cmd');
+      var code = cmd && cmd.querySelector('code');
+      if (!code) return;
+
+      var texto = code.textContent;
+      var ok = false;
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(texto);
+          ok = true;
+        }
+      } catch (e) { ok = false; }
+
+      if (!ok) {
+        var ta = document.createElement('textarea');
+        ta.value = texto;
+        ta.className = 'sr-only';
+        ta.setAttribute('readonly', '');
+        document.body.appendChild(ta);
+        ta.select();
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        ta.remove();
+      }
+
+      btn.dataset.ocupado = '1';
+      btn.textContent = ok ? 'Copiado!' : 'Não deu';
+      setTimeout(function () {
+        btn.textContent = 'Copiar';
+        delete btn.dataset.ocupado;
+      }, 2000);
+    });
+  });
+
+  /* =========================================================
+     Tema claro / escuro
+     ========================================================= */
+  (function iniciarTema() {
+    var botao = document.getElementById('tema');
+    if (!botao) return;
+    var raiz = document.documentElement;
+
+    function atual() {
+      if (raiz.dataset.theme === 'dark' || raiz.dataset.theme === 'light') {
+        return raiz.dataset.theme;
+      }
+      return (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)
+        ? 'dark' : 'light';
+    }
+
+    function rotular() {
+      botao.setAttribute('aria-label',
+        atual() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro');
+    }
+
+    botao.addEventListener('click', function () {
+      var novo = atual() === 'dark' ? 'light' : 'dark';
+      raiz.dataset.theme = novo;
+      try { localStorage.setItem('tema', novo); } catch (e) {}
+      rotular();
+    });
+
+    rotular();
+  })();
+
+  /* =========================================================
+     Primeira renderização
+     ========================================================= */
+  render();
+
+  /* =========================================================
+     Modo de edição (só para quem pode editar)
+     ========================================================= */
+  (async function iniciarEdicao() {
+    try {
+      if (typeof claude === 'undefined' || !claude || typeof claude.use !== 'function') return;
+
+      var resultados = await Promise.all([claude.use('artifact'), claude.use('user')]);
+      var a = resultados[0];
+      var u = resultados[1];
+
+      if (!a || typeof a.publish !== 'function') return;
+      if (!u || typeof u.canEdit !== 'function' || !u.canEdit()) return;
+
+      artefato = a;
+      montarPainel();
+      render();
+    } catch (e) {
+      /* fora do ambiente de edição: segue como site normal */
+    }
+  })();
+})();
+</script>
+</body>
+</html>
